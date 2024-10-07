@@ -1,6 +1,6 @@
 # ESP32 MJPEG Streaming Server
 
-This is a simple MJPEG streaming webserver with static IP implemented for the project of small semester. 
+This is a simple MJPEG streaming webserver with static IP implemented for the smart home project of small semester in BUPT. 
 It can create a MJPEG streaming webserver with unchanged URL given the gateway (the subnet should cover the preset IP. See `How to use`)
 Forked and modified from <https://github.com/arkhipenko/esp32-cam-mjpeg>. Tested on AI thinker ESP-32 CAM.
 
