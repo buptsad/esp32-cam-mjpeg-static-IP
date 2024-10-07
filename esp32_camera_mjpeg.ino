@@ -1,14 +1,12 @@
 /*
 
-  This is a simple MJPEG streaming webserver implemented for AI-Thinker ESP32-CAM and
-  ESP32-EYE modules.
-  This is tested to work with VLC and Blynk video widget.
-
-  Inspired by and based on this Instructable: $9 RTSP Video Streamer Using the ESP32-CAM Board
-  (https://www.instructables.com/id/9-RTSP-Video-Streamer-Using-the-ESP32-CAM-Board/)
+  This is a simple MJPEG streaming webserver implemented for AI-Thinker ESP32-CAM with static
+  IP given gateway to avoid IP change due to power cut.
+  It is modified from a simple MJPEG streaming webserver implemented for AI-Thinker ESP32-CAM and
+  ESP32-EYE modules. (https://github.com/arkhipenko/esp32-cam-mjpeg) Static gateway support is 
+  added to it.
 
   Board: AI-Thinker ESP32-CAM
-
 */
 
 #include "src/OV2640.h"
@@ -18,10 +16,10 @@
 
 // Select camera model
 //#define CAMERA_MODEL_WROVER_KIT
-#define CAMERA_MODEL_ESP_EYE
+//#define CAMERA_MODEL_ESP_EYE
 //#define CAMERA_MODEL_M5STACK_PSRAM
 //#define CAMERA_MODEL_M5STACK_WIDE
-//#define CAMERA_MODEL_AI_THINKER
+#define CAMERA_MODEL_AI_THINKER
 
 #include "camera_pins.h"
 
@@ -147,12 +145,33 @@ void setup()
   IPAddress ip;
 
   WiFi.mode(WIFI_STA);
-  WiFi.begin(SSID1, PWD1);
+  WiFi.begin(SSID, PWD); // This connection is only used to get the gateway IP
   while (WiFi.status() != WL_CONNECTED)
   {
     delay(500);
     Serial.print(F("."));
   }
+
+  IPAddress gateWay = WiFi.gatewayIP();
+  IPAddress subnet = WiFi.subnetMask();
+  IPAddress staticIP = gateWay;
+  staticIP[3] = 15; 
+  delay(1000);
+  Serial.print(F("Got gateway "));
+  Serial.print(gateWay);
+  Serial.println(F(" Start Connecting again..."));
+  WiFi.disconnect(); 
+  delay(1000);
+
+
+  WiFi.config(staticIP, gateWay, subnet); // Use the static IP to connect
+  WiFi.begin(SSID, PWD);
+  while (WiFi.status() != WL_CONNECTED)
+  {
+    delay(500);
+    Serial.print(F("."));
+  }
+
   ip = WiFi.localIP();
   Serial.println(F("WiFi connected"));
   Serial.println("");

@@ -1,3 +1,4 @@
+// This is the license of the original esp32_camera_mjpeg.ino.
 Copyright (c) 2015-2020, Anatoli Arkhipenko.
 All rights reserved.
 
